@@ -1,27 +1,6 @@
-import React, { useState, useMemo, useCallback } from "react";
-
-const STATUSES = [
-  "Not Contacted",
-  "Contacted",
-  "Meeting Scheduled",
-  "Proposal Sent",
-  "Negotiation",
-  "Closed Won",
-  "Closed Lost",
-];
-
-const SOURCES = ["Call", "Email", "LinkedIn", "Referral"];
-const TEMPS = ["Cold", "Warm", "Hot"];
-const PRIORITIES = ["Low", "Medium", "High"];
-const MEETING_STATUSES = ["None", "Scheduled", "Completed"];
+import React, { useState } from "react";
 
 const today = new Date().toISOString().split("T")[0];
-
-const d = (offset) => {
-  const dt = new Date();
-  dt.setDate(dt.getDate() + offset);
-  return dt.toISOString().split("T")[0];
-};
 
 const SEED_LEADS = [
   {
@@ -34,106 +13,47 @@ const SEED_LEADS = [
     source: "LinkedIn",
     status: "Contacted",
     temperature: "Hot",
-    lastContact: d(-2),
+    lastContact: "2025-01-10",
     nextFollowUp: today,
     meetingStatus: "Scheduled",
-    notes:
-      "Struggling with last-mile delivery tracking. Budget approved Q1. Wants demo next week.",
+    notes: "Struggling with last-mile delivery tracking. Budget approved Q1. Wants demo next week.",
     isDecisionMaker: true,
     dealValue: 48000,
     priority: "High",
   },
 ];
 
-const TEMP_CONFIG = {
-  Hot: { color: "#ef4444", bg: "#fef2f2", icon: "🔥" },
-  Warm: { color: "#f97316", bg: "#fff7ed", icon: "♨" },
-  Cold: { color: "#3b82f6", bg: "#eff6ff", icon: "❄" },
-};
-
-const STATUS_COLORS = {
-  "Not Contacted": "#6b7280",
-  Contacted: "#3b82f6",
-  "Meeting Scheduled": "#8b5cf6",
-  "Proposal Sent": "#f59e0b",
-  Negotiation: "#f97316",
-  "Closed Won": "#10b981",
-  "Closed Lost": "#ef4444",
-};
-
-const PRIORITY_CONFIG = {
-  High: { color: "#ef4444", bg: "#fef2f2" },
-  Medium: { color: "#f59e0b", bg: "#fffbeb" },
-  Low: { color: "#6b7280", bg: "#f9fafb" },
-};
-
 export default function App() {
-  const [leads, setLeads] = useState(SEED_LEADS);
+  const [leads] = useState(SEED_LEADS);
 
   return (
-    <div
-      style={{
-        fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, sans-serif",
-        backgroundColor: "#f3f4f6",
-        minHeight: "100vh",
-        padding: 16,
-        boxSizing: "border-box",
-      }}
-    >
-      <div
-        style={{
-          maxWidth: 1280,
-          margin: "0 auto",
-          display: "flex",
-          flexDirection: "column",
-          gap: 12,
-        }}
-      >
-        <header
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            gap: 12,
-          }}
-        >
-          <div>
-            <h1
-              style={{
-                fontSize: 24,
-                fontWeight: 600,
-                color: "#111827",
-                margin: 0,
-              }}
-            >
-              B2B Sales Outreach & Pipeline
-            </h1>
-            <p
-              style={{
-                margin: 0,
-                marginTop: 4,
-                fontSize: 13,
-                color: "#6b7280",
-              }}
-            >
-              Single-pane view of outreach, follow-ups, and deal progression.
-            </p>
-          </div>
-        </header>
+    <div style={{ fontFamily: "system-ui, sans-serif", background: "#0f172a", minHeight: "100vh", color: "#fff", padding: "20px" }}>
+      <h1 style={{ marginBottom: "8px" }}>B2B Sales Outreach & Pipeline</h1>
+      <p style={{ color: "#94a3b8", marginBottom: "24px" }}>Single-pane view of outreach, follow-ups, and deal progression.</p>
 
-        <div
-          style={{
-            borderRadius: 12,
-            border: "1px solid #e5e7eb",
-            padding: 12,
-            backgroundColor: "#ffffff",
-          }}
-        >
-          <h2 style={{ margin: 0, fontSize: 14, fontWeight: 600 }}>Leads</h2>
-          <p style={{ margin: 0, marginTop: 4, fontSize: 12, color: "#6b7280" }}>
-            Total: {leads.length} leads
-          </p>
-        </div>
+      <div style={{ background: "#1e293b", borderRadius: "8px", padding: "20px" }}>
+        <h2 style={{ margin: "0 0 12px 0", fontSize: "18px" }}>Leads</h2>
+        <p style={{ margin: "0 0 16px 0", fontSize: "12px", color: "#94a3b8" }}>Total: {leads.length} lead(s)</p>
+
+        {leads.map((lead) => (
+          <div key={lead.id} style={{ borderTop: "1px solid #334155", paddingTop: "16px" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "12px" }}>
+              <div><div style={{ fontSize: "12px", fontWeight: "600", color: "#94a3b8" }}>Company</div><div>{lead.company}</div></div>
+              <div><div style={{ fontSize: "12px", fontWeight: "600", color: "#94a3b8" }}>Contact</div><div>{lead.contactName}</div></div>
+              <div><div style={{ fontSize: "12px", fontWeight: "600", color: "#94a3b8" }}>Email</div><div>{lead.email}</div></div>
+              <div><div style={{ fontSize: "12px", fontWeight: "600", color: "#94a3b8" }}>Status</div><div style={{ display: "inline-block", padding: "2px 8px", borderRadius: "4px", background: "#3b82f6", fontSize: "12px" }}>{lead.status}</div></div>
+              <div><div style={{ fontSize: "12px", fontWeight: "600", color: "#94a3b8" }}>Temperature</div><div style={{ display: "inline-block", padding: "2px 8px", borderRadius: "4px", background: "#fef2f2", color: "#ef4444", fontSize: "12px" }}>{lead.temperature}</div></div>
+              <div><div style={{ fontSize: "12px", fontWeight: "600", color: "#94a3b8" }}>Priority</div><div style={{ display: "inline-block", padding: "2px 8px", borderRadius: "4px", background: "#fef2f2", color: "#ef4444", fontSize: "12px" }}>{lead.priority}</div></div>
+              <div><div style={{ fontSize: "12px", fontWeight: "600", color: "#94a3b8" }}>Deal Value</div><div>${lead.dealValue.toLocaleString()}</div></div>
+              <div><div style={{ fontSize: "12px", fontWeight: "600", color: "#94a3b8" }}>Source</div><div>{lead.source}</div></div>
+              <div><div style={{ fontSize: "12px", fontWeight: "600", color: "#94a3b8" }}>Next Follow Up</div><div>{lead.nextFollowUp}</div></div>
+            </div>
+            <div style={{ marginTop: "12px" }}>
+              <div style={{ fontSize: "12px", fontWeight: "600", color: "#94a3b8" }}>Notes</div>
+              <div style={{ fontSize: "14px", color: "#cbd5e1" }}>{lead.notes}</div>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
