@@ -1,0 +1,9 @@
+node_modules
+.DS_Store
+dist
+.vite
+dep
+.npmrc
+.env
+.env.local
+.env.*.local
